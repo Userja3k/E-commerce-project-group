@@ -1,0 +1,247 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Notifications E-commerce — Exemples</title>
+  <style>
+    /* Container (position fixe) */
+    .toast-container {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      z-index: 9999;
+      width: 320px;
+      max-width: calc(100% - 2rem);
+      pointer-events: none; /* permettre clics en-dessous sauf sur toasts */
+    }
+
+    /* Toast base */
+    .toast {
+      pointer-events: auto;
+      display: flex;
+      gap: .75rem;
+      align-items: flex-start;
+      padding: .75rem  .9rem;
+      border-radius: 10px;
+      box-shadow: 0 6px 18px rgba(16,24,40,0.12);
+      background: #fff;
+      color: #0f172a;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      border-left: 6px solid transparent;
+      transform-origin: top right;
+      animation: toast-in .18s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes toast-in {
+      from { transform: translateY(-8px) scale(.98); opacity: 0 }
+      to   { transform: translateY(0) scale(1); opacity: 1 }
+    }
+
+    /* Variantes */
+    .toast--success { border-left-color: #16a34a; }
+    .toast--info    { border-left-color: #2563eb; }
+    .toast--warning { border-left-color: #f59e0b; }
+    .toast--error   { border-left-color: #dc2626; }
+
+    /* Icon + text layout */
+    .toast__icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: inline-grid;
+      place-items: center;
+      background: rgba(15,23,42,0.04);
+      flex-shrink: 0;
+      font-weight: 700;
+      color: inherit;
+    }
+    .toast__body {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .toast__title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+    .toast__msg {
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.25;
+      word-wrap: break-word;
+    }
+
+    /* Close button */
+    .toast__close {
+      background: transparent;
+      border: 0;
+      padding: 4px;
+      margin-left: 8px;
+      cursor: pointer;
+      color: #94a3b8;
+      border-radius: 6px;
+      align-self: start;
+    }
+    .toast__close:hover { background: rgba(15,23,42,0.04); color: #0f172a; }
+
+    /* Progress bar */
+    .toast__progress {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 4px;
+      background: linear-gradient(90deg, rgba(0,0,0,0.08), rgba(0,0,0,0.06));
+      width: 100%;
+    }
+    .toast__progress > .bar {
+      height: 100%;
+      width: 100%;
+      transform-origin: left;
+      transform: scaleX(1);
+      transition: transform linear;
+    }
+
+    /* small responsive tweak */
+    @media (max-width:420px) {
+      .toast-container { left: 1rem; right: 1rem; width: auto }
+    }
+  </style>
+</head>
+<body>
+  <h2 style="font-family:system-ui; padding:1rem">Démonstration notifications — eCommerce</h2>
+
+  <!-- Buttons de démonstration -->
+  <div style="padding:1rem; display:flex; gap:.5rem; flex-wrap:wrap;">
+    <button onclick="showToast('success','Commande passée avec succès !','Votre commande #A12345 a bien été reçue.')" >Success</button>
+    <button onclick="showToast('info','Nouveau message client','Vous avez un nouveau message de Sophie.')" >Info</button>
+    <button onclick="showToast('warning','Stock faible','Il ne reste que 2 exemplaires de « Chaise X ».')" >Warning</button>
+    <button onclick="showToast('error','Échec paiement','La transaction a été refusée. Vérifiez la carte.')" >Error</button>
+  </div>
+
+  <!-- Conteneur de toasts -->
+  <div class="toast-container" id="toastContainer" aria-live="polite" aria-atomic="false"></div>
+
+  <script>
+    /**
+     * showToast(type, title, message, options)
+     * type: 'success'|'info'|'warning'|'error'
+     * title: court titre
+     * message: texte descriptif
+     * options: { duration: ms (default 5000) }
+     */
+    function showToast(type='info', title='Info', message='', options={}) {
+      const duration = options.duration ?? 5000;
+      const container = document.getElementById('toastContainer');
+
+      // Create toast
+      const toast = document.createElement('div');
+      toast.className = 'toast toast--' + (type || 'info');
+      toast.setAttribute('role','status');
+      toast.setAttribute('aria-live','polite');
+
+      // Icon based on type (simple letters or emoji)
+      const icons = {
+        success: '✓',
+        info: 'i',
+        warning: '!',
+        error: '✕'
+      };
+      const icon = icons[type] ?? 'i';
+
+      toast.innerHTML = `
+        <div class="toast__icon" aria-hidden="true">${icon}</div>
+        <div class="toast__body">
+          <div class="toast__title">${escapeHtml(title)}</div>
+          <div class="toast__msg">${escapeHtml(message)}</div>
+        </div>
+        <button class="toast__close" aria-label="Fermer notification">&times;</button>
+        <div class="toast__progress"><div class="bar"></div></div>
+      `;
+
+      // close button
+      const closeBtn = toast.querySelector('.toast__close');
+      closeBtn.addEventListener('click', () => removeToast(toast));
+
+      // insert
+      container.prepend(toast);
+
+      // progress bar animation (use transform to reduce layout thrash)
+      const bar = toast.querySelector('.bar');
+      // set transition duration equal to remaining duration
+      // start after a tiny timeout so transition applies
+      requestAnimationFrame(() => {
+        bar.style.transition = `transform ${duration}ms linear`;
+        bar.style.transform = 'scaleX(0)';
+      });
+
+      // auto remove after duration
+      const timeoutId = setTimeout(() => removeToast(toast), duration);
+
+      // pause on hover
+      let paused = false;
+      toast.addEventListener('mouseenter', () => {
+        if (paused) return;
+        paused = true;
+        // compute computed transform to freeze progress
+        const computed = window.getComputedStyle(bar).transform;
+        bar.style.transition = 'none';
+        bar.style.transform = computed;
+        clearTimeout(timeoutId);
+      });
+      toast.addEventListener('mouseleave', () => {
+        if (!paused) return;
+        // compute remaining time from transform matrix
+        const matrix = window.getComputedStyle(bar).transform;
+        let scaleX = 1;
+        if (matrix && matrix !== 'none') {
+          // matrix(a, b, c, d, tx, ty) ; scaleX is a
+          const parts = matrix.match(/matrix\\(([^,]+),/);
+          if (parts) scaleX = parseFloat(parts[1]);
+        } else {
+          scaleX = 1;
+        }
+        const elapsedRatio = 1 - scaleX; // how much is gone
+        const remaining = Math.round(duration * (scaleX)); // approximate remaining
+        // resume transition
+        requestAnimationFrame(() => {
+          bar.style.transition = `transform ${remaining}ms linear`;
+          bar.style.transform = 'scaleX(0)';
+        });
+        // schedule final removal
+        setTimeout(() => removeToast(toast), remaining);
+        paused = false;
+      });
+
+      // helper to remove
+      function removeToast(node) {
+        if (!node) return;
+        // fade out
+        node.style.transition = 'opacity .18s ease, transform .18s ease';
+        node.style.opacity = '0';
+        node.style.transform = 'translateY(-6px) scale(.98)';
+        setTimeout(() => node.remove(), 180);
+      }
+
+      // simple XSS-safe escape for content (we control innerHTML above with escaped values)
+      function escapeHtml(str) {
+        if (!str && str !== 0) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+    }
+
+    // Exemple d'utilisation automatique (démo)
+    // showToast('success','Commande OK','Votre commande #A12345 sera expédiée demain.', {duration:6000});
+  </script>
+</body>
+</html>
