@@ -1,0 +1,371 @@
+body {
+    font-family: helvetica, sans-serif;
+    font-size: 14px;
+    color: #000000;
+    margin: 0;
+    background-color: #f9f9f9;
+    margin: 0;
+}
+
+/*grand ecran*/
+
+main {
+    margin: 0;
+    padding: 0;
+}
+
+.setting_icon {
+    width: 30px;
+    height: 30px;
+    background-color: white;
+    box-shadow: rgba(128, 128, 128, 0.325) 0px 0px 4px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease;
+}
+
+.setting_icon:hover {
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 15px;
+    cursor: pointer;
+}
+
+.setting_icon img {
+    width: 80%;
+    height: 80%;
+    object-fit: contain;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px 40px;
+    background-color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-weight: 700;
+    font-size: 28px;
+    color: #222;
+}
+
+.filter {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.tous,
+.gender-age,
+.categories {
+    display: flex;
+    gap: 10px;
+}
+
+.tous div,
+.gender-age div,
+.categories div {
+    background-color: rgb(170, 0, 255);
+    color: white;
+    font-weight: bold;
+    width: 120px;
+    height: 30px;
+    border-radius: 20px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.3s ease;
+    text-transform: capitalize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tous div:hover,
+.gender-age div:hover,
+.categories div:hover {
+    background-color: #9400d3;
+}
+
+.product-grid {
+    margin-bottom: 40px;
+}
+
+.product-grid h3 {
+    font-size: 22px;
+    color: #555;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.produit-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+.Item {
+    background-color: #fafafa;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.Item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.Item img {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.Item .Price {
+    font-weight: 700;
+    color: #333;
+    font-size: 16px;
+    margin-bottom: 6px;
+}
+
+.Item .number {
+    font-size: 14px;
+    color: #777;
+}
+
+/* Responsive adjustments */
+
+@media (max-width: 768px) {
+    .filter {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        align-items: flex-start;
+    }
+
+    .tous div,
+    .gender-age div,
+    .categories div {
+        width: auto;
+        min-width: 90px;
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+
+    .produit-items {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 15px;
+    }
+
+    .container {
+        margin: 20px 10px;
+        padding: 10px;
+    }
+}
+
+/* Profile Page Styles */
+
+/* Cover photo container */
+.couv {
+    width: 100%;
+    height: 180px;
+    background-color: #ddd;
+    margin: 0;
+    overflow: hidden;
+}
+
+.couv img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Profile photo container 
+
+section {
+    display: flex;
+    justify-content: space-between;
+}*/
+
+.profil {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: -70px auto 25px;
+    border: 5px solid #fff;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+.photo-profile {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Infos section */
+.infos {
+    max-width: 600px;
+    margin: 0 auto 35px;
+    padding: 0 15px;
+    background-color: #fff;
+    border-radius: 16px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.infos .id {
+    padding: 15px 20px;
+}
+
+.infos .id .name {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #222;
+}
+
+.infos .bio {
+    color: #555;
+    font-size: 16px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+}
+
+.infos hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 10px 0;
+}
+
+.wallet {
+    padding: 15px 20px;
+}
+
+.wallet h3 {
+    font-weight: 700;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.wallet h3 img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}
+
+.wallet p {
+    font-size: 24px;
+    font-weight: 700;
+    color: #222;
+    margin: 0;
+}
+
+/* Links section */
+.links {
+    max-width: 600px;
+    margin: 0 auto 20px;
+    padding: 0 15px;
+}
+
+.links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-around;
+    gap: 50px;
+}
+
+.links ul li a img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+/* Product grid styles reused from catalogue */
+
+.products h2 {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 25px;
+    color: #222;
+    text-align: center;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.products .product-grid {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+}
+
+/* Responsive adjustments for profile */
+
+@media (max-width: 768px) {
+
+    section {
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }   
+
+    .couv {
+        height: 140px;
+    }
+
+    .profil {
+        width: 100px;
+        height: 100px;
+        margin: -50px auto 20px;
+    }
+
+    .infos {
+        padding: 0 10px;
+    }
+
+    .links ul {
+        gap: 20px;
+    }
+
+    .links ul li a img {
+        width: 30px;
+        height: 30px;
+    }
+
+    .products h2 {
+        font-size: 20px;
+    }
+}
